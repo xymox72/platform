@@ -1,0 +1,62 @@
+name: Reusable Rust CI (just, container-based)
+
+on:
+  workflow_call:
+    inputs:
+      container-image:
+        required: false
+        type: string
+        default: ghcr.io/xymox72/devops-rust:latest
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTC_WRAPPER: sccache
+  SCCACHE_CACHE_SIZE: "1G"
+  SCCACHE_DIR: "/tmp/sccache"
+
+jobs:
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.container-image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: just build
+
+  test:
+    name: ✅ Test
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.container-image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+      - run: just test
+
+  lint:
+    name: 🔍 Clippy
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.container-image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: just lint
+
+  fmt:
+    name: 🧼 Format
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.container-image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: just fmt

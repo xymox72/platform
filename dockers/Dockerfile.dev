@@ -1,0 +1,30 @@
+# ---------- Стадия 1: Dev-образ для сборки и разработки ----------
+    FROM rust:1.85.0-alpine3.21 AS dev
+
+    # Установка системных зависимостей
+    RUN apk add --no-cache musl-dev openssl-dev pkgconfig openssl-libs-static curl bash
+    
+    # Установка just
+    RUN curl -fsSL https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+    
+    # Установка утилит Rust
+    RUN rustup component add clippy rustfmt
+    
+    # Рабочая директория
+    WORKDIR /app
+    
+    # Копируем только Cargo файлы для кэширования зависимостей
+    COPY Cargo.toml Cargo.lock ./
+    RUN mkdir src && echo "fn main() {}" > src/main.rs
+    RUN cargo fetch
+    RUN rm -r src
+    
+    # Копируем весь проект
+    COPY . .
+    
+    # ---------- Стадия 2: Чистый runtime образ (если надо) ----------
+    # FROM alpine:3.21 AS runtime
+    # RUN apk add --no-cache libssl3
+    # COPY --from=dev /app/target/release/note-service /usr/local/bin/note-service
+    # ENTRYPOINT ["note-service"]
+    

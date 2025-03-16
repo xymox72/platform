@@ -1,0 +1,28 @@
+FROM ghcr.io/xymox72/devops-base:latest
+
+RUN apk add --no-cache curl build-base musl-dev openssl-dev pkgconfig openssl-libs-static tar
+
+# Устанавливаем Rust
+ENV CARGO_HOME=/usr/local/cargo
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV PATH="$CARGO_HOME/bin:$PATH"
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal \
+ && rustup default stable \
+ && rustup component add clippy rustfmt
+
+# Устанавливаем sccache (через бинарник)
+RUN curl -L https://github.com/mozilla/sccache/releases/download/v0.10.0/sccache-v0.10.0-x86_64-unknown-linux-musl.tar.gz \
+    | tar xz && mv sccache-v0.10.0-x86_64-unknown-linux-musl/sccache /usr/local/bin/ \
+    && chmod +x /usr/local/bin/sccache \
+    && rm -rf sccache-v0.10.0-x86_64-unknown-linux-musl
+
+# Удаляем curl после того как он больше не нужен
+RUN apk del curl \
+ && rm -rf /var/cache/apk/* $CARGO_HOME/registry $CARGO_HOME/git
+
+# Настройки для sccache
+ENV PATH="/usr/local/bin:$PATH"
+ENV RUSTC_WRAPPER="sccache"
+ENV SCCACHE_DIR="/tmp/sccache"
+ENV SCCACHE_CACHE_SIZE="1G"

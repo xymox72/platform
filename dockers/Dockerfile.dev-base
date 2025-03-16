@@ -1,0 +1,25 @@
+# --------- Универсальный Dev-образ с just ---------
+    FROM alpine:3.21
+
+    # Установка базовых CLI и инструментов
+    RUN apk add --no-cache \
+        bash \
+        curl \
+        make \
+        git \
+        musl-dev \ 
+        openssl-dev \ 
+        pkgconfig \ 
+        openssl-libs-static
+    
+    # Установка just
+    RUN curl -fsSL https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+    
+    # Рабочая директория по умолчанию
+    WORKDIR /app
+    
+    # Можно добавить docker label (опционально)
+    LABEL org.opencontainers.image.title="DevOps Base Image" \
+          org.opencontainers.image.description="Base image with just for CI/CD across languages" \
+          org.opencontainers.image.maintainer="skad72@live.ru"
+    

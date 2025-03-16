@@ -1,0 +1,8 @@
+FROM ghcr.io/xymox72/devops-base:latest
+
+RUN apk add --no-cache python3 py3-pip \
+ && pip3 install uv \
+ && uv venv
+
+ENV PATH="/app/.venv/bin:$PATH"
+WORKDIR /app

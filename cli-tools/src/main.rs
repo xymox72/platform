@@ -14,5 +14,7 @@ fn main() {
         Commands::List => list::run(),
         Commands::DeleteOld { days } => delete_old::run(days),
         Commands::CiClean { repo } => ci_clean::run(&repo),
+        Commands::RegistryClean { all, name , ntype} => regestry_clean::run(ntype, name,all),
+        
     }
 }

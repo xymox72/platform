@@ -1,0 +1,39 @@
+{
+    "name": "@xymox72/pulumi",
+    "main": "./bin/index.js",
+    "version": "0.0.1",
+    "types": "./bin/index.d.ts",
+    "files": [
+        "bin"
+    ],
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "build": "tsc",
+        "release": "commit-and-tag-version",
+        "release:patch": "yarn build && yarn release --release-as patch && git push --follow-tags origin main && yarn npm publish --access public",
+        "release:minor": "yarn build && yarn release --release-as minor && git push --follow-tags origin main && yarn npm publish --access public",
+        "release:major": "yarn build && yarn release --release-as major && git push --follow-tags origin main && yarn npm publish --access public"
+    },
+    "dependencies": {
+        "@pulumi/kubernetes": "^4.0.0",
+        "@pulumi/pulumi": "^3.113.0",
+        "commit-and-tag-version": "^12.5.0"
+    },
+    "volta": {
+        "node": "22.14.0",
+        "yarn": "4.7.0",
+        "typescript": "5.8.2"
+    },
+    "devDependencies": {
+        "@types/node": "^22.13.11"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/xymox72/platform",
+        "directory": "packages/pulumi"
+    },
+    "readme": "packages/pulumi/README.md"
+}

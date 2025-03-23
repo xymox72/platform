@@ -1,10 +1,11 @@
 //! src/github/config.rs
+use std::os::unix::process;
 #[warn(unused_imports)]
 use std::process::Command;
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
 
-use crate::github::env::{username, token, repo};
+use crate::github::env::{username, token, repo, scope_project};
 
 #[derive(Debug, Deserialize)]
 pub struct Package {
@@ -84,4 +85,35 @@ pub fn gh_status(args: &[&str]) -> bool {
         .expect("❌ Не удалось вызвать `gh`");
 
     status.success()
+}
+
+pub fn get_packages_by_type(package_type: &str) -> Vec<Package> {
+    let user = username();
+    let out = gh_api(&[&format!("/users/{}/packages?package_type={}", user, package_type)]);
+    serde_json::from_slice(&out).unwrap_or_default()
+}
+
+pub fn get_versions_by_type(package_type: &str, name: &str) -> Vec<Version> {
+    let user = username();
+    let out = gh_api(&[&format!(
+        "/users/{}/packages/{}/{}/versions",
+        user, package_type, name
+    )]);
+    serde_json::from_slice(&out).unwrap_or_default()
+}
+
+pub fn get_project_scope() -> String{
+    match scope_project() {
+        Some(scope) => {
+            if scope.starts_with('@'){
+                scope
+            }else{
+                format!("@{}", scope)
+            }
+        }
+        None => {
+            eprintln!("❌ PROJECT_SCOPE не установлен в .env");
+            std::process::exit(1);
+        }
+    }
 }

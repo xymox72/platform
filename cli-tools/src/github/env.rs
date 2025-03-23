@@ -1,4 +1,6 @@
 use std::env;
+use clap::builder::Str;
+
 use crate::github::gh_json;
 
 /// Загружаем .env при первом обращении
@@ -61,6 +63,17 @@ pub fn repo() -> Option<String> {
     if let Ok(repo) = env::var("GITHUB_REPOSITORY") {
         Some(repo)
     } else {
+        None
+    }
+}
+
+
+pub fn scope_project() -> Option<String>{
+    init();
+
+    if let Ok(scope_name) = env::var("PROJECT_SCOPE"){
+        Some(scope_name)
+    }else {
         None
     }
 }

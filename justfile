@@ -34,6 +34,12 @@ clean-cargo:
     rm -rf cli-tools/.rust-script || true
     rm -rf cli-tools/target || true
 
+clean-node:
+    @echo "🧼 Удаляем node_modules, .yarn/cache, bin"
+    find . -type d -name "node_modules" -prune -exec rm -rf {} \; || true
+    find . -type d -name "bin" -prune -exec rm -rf {} \; || true
+    rm -rf .yarn/cache .yarn/install-state.gz .pnp.* || true
+
 clean-files:
     @echo "🧽 Удаляем временные .lock/.tmp/.bak/.old"
     find . -type f \( \
@@ -43,10 +49,7 @@ clean-files:
         -name "*.old" \
     \) -exec rm -v {} \; || true
 
-clean-all:
-    just clean-cargo
-    just clean-files
-
+clean-docker:
     @echo "🧹 Останавливаем все контейнеры..."
     docker stop $(docker ps -aq) || true
 
@@ -60,9 +63,15 @@ clean-all:
     docker volume rm $(docker volume ls -q) || true
 
     @echo "🌐 Удаляем все кастомные сети..."
-    docker network rm $(docker network ls -q | grep -v "bridge\|host\|none") || true
+    docker network rm $(docker network ls -q | grep -v "bridge\\|host\\|none") || true
 
     @echo "🧼 Чистим builder-кэш..."
     docker builder prune -a -f
 
     @echo "✅ Docker окружение очищено."
+
+clean-all:
+    just clean-cargo
+    just clean-node
+    just clean-files
+    just clean-docker

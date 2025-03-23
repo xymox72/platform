@@ -1,0 +1,17 @@
+{
+    "name": "platform-devops",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "packageManager": "yarn@4.7.0",
+    "scripts": {
+        "build": "yarn workspaces foreach run build",
+        "release": "yarn workspaces foreach run release",
+        "build-pulumi": "yarn workspace @xymox72/pulumi run release:patch"
+    },
+    "volta": {
+        "node": "22.14.0",
+        "yarn": "4.7.0"
+    }
+}

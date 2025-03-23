@@ -21,4 +21,15 @@ pub enum Commands {
         #[arg(long, default_value = "")]
         repo: String,
     },
+    RegistryClean {
+        #[arg(long)]
+        ntype: String,
+
+        #[arg(long)]
+        name: Option<String>,
+
+        /// Удалить ВСЕ пакеты этого типа
+        #[arg(long, default_value_t = false)]
+        all: bool,
+    },
 }

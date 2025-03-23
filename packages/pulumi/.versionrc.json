@@ -1,0 +1,8 @@
+{
+    "skip": {
+      "tag": false
+    },
+    "commitMessage": "release: v%s",
+    "tagPrefix": ""
+  }
+  

@@ -2,8 +2,6 @@ import * as k8s from "@pulumi/kubernetes";
 import { IBackendAppProps } from "../types";
 
 
-
-
 export class BackendApplication {
     name: string;
     props: IBackendAppProps;

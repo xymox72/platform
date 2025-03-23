@@ -1,7 +1,7 @@
 {
     "name": "@xymox72/pulumi",
     "main": "./bin/index.js",
-    "version": null,
+    "version": "1.0.1",
     "types": "./bin/index.d.ts",
     "files": [
         "bin"

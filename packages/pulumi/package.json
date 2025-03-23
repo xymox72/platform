@@ -6,6 +6,7 @@
     "files": [
         "bin"
     ],
+    "private": false,
     "scripts": {
         "typecheck": "tsc --noEmit",
         "build": "tsc",
